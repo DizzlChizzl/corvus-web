@@ -5,7 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Corvus Web · Royal Family GGD Bingo</title>
 <style>
-:root{--bg:#09080a;--panel:#18141c;--panel2:#261f2c;--text:#f0ece5;--muted:#b9aebd;--gold:#caa65a;--red:#8e1f2f;--border:rgba(240,236,229,.16)}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(142,31,47,.35),transparent 30%),radial-gradient(circle at 90% 10%,rgba(202,166,90,.18),transparent 28%),linear-gradient(145deg,#121014,#050506);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px}.wrap{max-width:1050px;margin:0 auto}.hero{text-align:center;margin:20px 0 18px}.eyebrow{color:var(--gold);letter-spacing:.18em;text-transform:uppercase;font-size:12px;margin:0 0 8px}h1{margin:0;font-size:clamp(36px,8vw,76px);line-height:.88;text-transform:uppercase}.sub{color:var(--muted);max-width:720px;margin:14px auto 0}.controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px 0}button.control{border:1px solid rgba(202,166,90,.45);color:var(--text);border-radius:999px;padding:13px 18px;background:linear-gradient(135deg,var(--red),#40101a);font-weight:900;cursor:pointer}button.secondary{background:rgba(240,236,229,.06)}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.cell{min-height:124px;perspective:800px;border:0;background:transparent;padding:0;cursor:pointer}.inner{position:relative;width:100%;height:100%;min-height:124px;transition:transform .55s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}.cell.marked .inner{transform:rotateY(180deg)}.face{position:absolute;inset:0;border:1px solid var(--border);border-radius:16px;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;backface-visibility:hidden;overflow:hidden}.front{background:linear-gradient(180deg,var(--panel),var(--panel2))}.back{transform:rotateY(180deg);background:radial-gradient(circle at center,rgba(202,166,90,.24),transparent 45%),linear-gradient(180deg,rgba(142,31,47,.72),#21131a);border-color:rgba(202,166,90,.7)}.label{font-weight:950;font-size:clamp(11px,1.5vw,16px);line-height:1.05;text-transform:uppercase}.mark{font-size:clamp(30px,5vw,54px);color:var(--gold);font-weight:1000;line-height:1}.marktext{color:var(--text);font-weight:950;letter-spacing:.08em;margin-top:8px}.note{text-align:center;color:var(--muted);margin-top:18px;font-size:14px}.badge{color:var(--gold);font-size:11px;margin-top:8px;letter-spacing:.08em;text-transform:uppercase}.status{text-align:center;color:var(--muted);font-size:13px;margin-top:8px}@media(max-width:720px){body{padding:10px}.grid{gap:5px}.cell,.inner{min-height:88px}.face{border-radius:10px;padding:6px}.label{font-size:10px}.badge{display:none}.marktext{font-size:11px}}
+:root{
+  --bg:#09080a;--panel:#18141c;--panel2:#261f2c;--text:#f0ece5;--muted:#b9aebd;
+  --gold:#caa65a;--red:#8e1f2f;--border:rgba(240,236,229,.16);
+  --grid-gap:clamp(4px,1.4vw,12px);
+}
+*{box-sizing:border-box}
+html,body{width:100%;overflow-x:hidden}
+body{
+  margin:0;min-height:100vh;
+  background:radial-gradient(circle at 15% 0%,rgba(142,31,47,.35),transparent 30%),radial-gradient(circle at 90% 10%,rgba(202,166,90,.18),transparent 28%),linear-gradient(145deg,#121014,#050506);
+  color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  padding:clamp(10px,2.2vw,28px);
+}
+.wrap{width:min(100%,1120px);margin:0 auto}.hero{text-align:center;margin:clamp(14px,3vw,28px) 0 clamp(14px,2.5vw,22px)}
+.eyebrow{color:var(--gold);letter-spacing:.18em;text-transform:uppercase;font-size:clamp(10px,2.2vw,13px);margin:0 0 8px}
+h1{margin:0;font-size:clamp(38px,9vw,84px);line-height:.88;text-transform:uppercase;letter-spacing:-.035em}.sub{color:var(--muted);max-width:760px;margin:14px auto 0;font-size:clamp(16px,3.4vw,25px);line-height:1.25}.status{text-align:center;color:var(--muted);font-size:clamp(12px,2.6vw,14px);margin-top:10px}
+.controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:clamp(18px,3vw,28px) 0}
+button.control{border:1px solid rgba(202,166,90,.45);color:var(--text);border-radius:999px;padding:13px 18px;background:linear-gradient(135deg,var(--red),#40101a);font-weight:900;cursor:pointer;font-size:clamp(14px,3.3vw,17px);min-width:min(220px,42vw)}button.secondary{background:rgba(240,236,229,.06)}
+.grid{width:100%;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--grid-gap);align-items:stretch}.cell{width:100%;aspect-ratio:1/1;border:0;background:transparent;padding:0;cursor:pointer;perspective:900px;min-width:0}.inner{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}.cell.marked .inner{transform:rotateY(180deg)}.face{position:absolute;inset:0;border:1px solid var(--border);border-radius:clamp(8px,2vw,18px);padding:clamp(4px,1.15vw,12px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;backface-visibility:hidden;overflow:hidden}.front{background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)}.back{transform:rotateY(180deg);background:radial-gradient(circle at center,rgba(202,166,90,.24),transparent 45%),linear-gradient(180deg,rgba(142,31,47,.72),#21131a);border-color:rgba(202,166,90,.7)}
+.label{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:950;text-transform:uppercase;line-height:1.02;letter-spacing:-.04em;font-size:clamp(8px,2.05vw,18px);overflow-wrap:anywhere;word-break:normal;hyphens:auto;text-wrap:balance}.badge{color:var(--gold);font-size:clamp(7px,1.2vw,11px);margin-top:5px;letter-spacing:.07em;text-transform:uppercase;line-height:1}.mark{font-size:clamp(24px,7vw,60px);color:var(--gold);font-weight:1000;line-height:1}.marktext{color:var(--text);font-weight:950;letter-spacing:.06em;margin-top:6px;font-size:clamp(8px,1.8vw,14px)}.note{text-align:center;color:var(--muted);margin-top:18px;font-size:clamp(12px,2.8vw,15px);line-height:1.35}
+@media(max-width:430px){
+  body{padding:8px}.wrap{width:100%}.grid{gap:4px}.face{padding:3px;border-radius:8px}.label{font-size:clamp(7px,2.35vw,10px);letter-spacing:-.055em;line-height:.98}.badge{display:none}.controls{gap:8px}button.control{padding:11px 12px;min-width:0;flex:1 1 0}.sub{font-size:clamp(15px,3.9vw,18px)}
+}
+@media(min-width:900px){.grid{max-width:min(92vh,980px);margin:0 auto}.label{font-size:clamp(13px,1.15vw,20px)}}
 </style>
 </head>
 <body>
@@ -14,7 +37,7 @@
     <p class="eyebrow">Corvus Web Lab · Goose Goose Duck Intelligence</p>
     <h1>Royal Family<br>GGD Bingo</h1>
     <p class="sub">Mobile Demo. Felder antippen: Die Karte dreht sich um und zeigt das Royal-Family-Mark. WordPress kommt später, hier testen wir schnell und sauber.</p>
-    <p class="status" id="status">Build 0.1 · Standalone GitHub Demo</p>
+    <p class="status" id="status">Build 0.2 · Responsive Grid</p>
   </section>
   <div class="controls">
     <button class="control" id="generate">Neue Karte</button>
