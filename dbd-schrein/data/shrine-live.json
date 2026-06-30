@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "data_version": "nightlight-week-590-live-cache-2026-06-30",
+  "source": "NightLight API live cache enriched by Corvus Drive overrides",
+  "data": {
+    "start": "2026-06-23T15:00:00",
+    "end": "2026-06-30T14:59:59",
+    "week": 590,
+    "perks": [
+      {
+        "id": 189,
+        "price": 2000,
+        "shards": 2000,
+        "name": "Grim Embrace",
+        "perk_name_en": "Grim Embrace",
+        "perk_name_de": "Düstere Umarmung",
+        "image": "perks/grim-embrace.png",
+        "icon_url": "https://api.nightlight.gg/v1/images/perks/grim-embrace.png",
+        "character": "The Artist",
+        "role": "Killer",
+        "usage_tier": "high",
+        "description_de": "Immer wenn du einen Survivor zum ersten Mal festhakst, erhältst du 1 Zähler. Wenn du dich 16 Meter vom festgehakten Survivor entfernst, werden alle Generatoren kurzzeitig blockiert. Bei 4 Zählern werden alle Generatoren länger blockiert und du siehst kurz die Aura des Ziels der Besessenheit.",
+        "corvus_take": "Starker Druck-Perk gegen frühe Generator-Rushes. Lohnt sich besonders, wenn du Hooks auf verschiedene Survivor verteilst.",
+        "tag": "Druck"
+      },
+      {
+        "id": 84,
+        "price": 2000,
+        "shards": 2000,
+        "name": "Blood Warden",
+        "perk_name_en": "Blood Warden",
+        "perk_name_de": "Blutwächter",
+        "image": "perks/blood-warden.png",
+        "icon_url": "https://api.nightlight.gg/v1/images/perks/blood-warden.png",
+        "character": "The Nightmare",
+        "role": "Killer",
+        "usage_tier": "average",
+        "description_de": "Ein Endgame-Perk des Albtraums. Die vollständige deutsche Beschreibung fehlt im aktuellen Drive-Export noch und muss aus der Source of Truth ergänzt werden.",
+        "corvus_take": "Sehr ikonisch, aber timingabhängig. Für Endgame-Fallen und dramatische Clips stark; nicht blind kaufen, wenn du konstante Early-Game-Werte suchst.",
+        "tag": "Endgame"
+      },
+      {
+        "id": 51,
+        "price": 2000,
+        "shards": 2000,
+        "name": "Balanced Landing",
+        "perk_name_en": "Balanced Landing",
+        "perk_name_de": "Balanced Landing",
+        "image": "perks/balanced-landing.png",
+        "icon_url": "https://api.nightlight.gg/v1/images/perks/balanced-landing.png",
+        "character": "Nea Karlsson",
+        "role": "Survivor",
+        "usage_tier": "high",
+        "description_de": "Nach einem Sturz profitierst du von reduzierter Taumelzeit und kannst kurzzeitig Eile erhalten. Der Perk verursacht Erschöpfung.",
+        "corvus_take": "Guter Mobility-Perk, aber mapabhängig. Stark auf Maps mit brauchbaren Höhen; schwächer, wenn die Map kaum passende Drops bietet.",
+        "tag": "Mapabhängig"
+      },
+      {
+        "id": 291,
+        "price": 2000,
+        "shards": 2000,
+        "name": "Teamwork: Throw Down",
+        "perk_name_en": "Teamwork: Throw Down",
+        "perk_name_de": "Teamwork: Throw Down",
+        "image": "perks/teamwork-throw-down.png",
+        "icon_url": "https://api.nightlight.gg/v1/images/perks/teamwork-throw-down.png",
+        "character": "Michonne Grimes",
+        "role": "Survivor",
+        "usage_tier": "low",
+        "description_de": "Drive-Abgleich offen: neuer oder ungeprüfter Perk. Corvus zeigt API-Daten an und wartet auf deutsche Source-of-Truth-Ergänzung.",
+        "corvus_take": "Noch nicht final bewertet. Erst Drive- und Patch-Abgleich, dann echte Kaufempfehlung.",
+        "tag": "Neu prüfen"
+      }
+    ]
+  }
+}
