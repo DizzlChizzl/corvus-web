@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "data_version": "ggd-bingo-live-2026-06-30-levi-truth-0.7",
-  "source": "Levi reviewed workshop export; Levi decisions are truth",
+  "data_version": "ggd-bingo-live-2026-06-30-ingame-only-0.8",
+  "source": "Workshop export with ingame-only rule",
   "default_pool_rule": "active=true",
   "fields": [
     {"id":"reingedizzlt","label":"REINGEDIZZLT","active":true,"category":"RF"},
@@ -48,7 +48,6 @@
     {"id":"bus","label":"VERKEHR IST AUCH EIN KILLER","active":true,"category":"MAP"},
     {"id":"falcon_confusion","label":"FALKE ODER FALKE?","active":true,"category":"KNOWLEDGE"},
     {"id":"role_claim_raven","label":"ROLLENCLAIM FÜTTERT DEN RABEN","active":true,"category":"SOCIAL"},
-    {"id":"everyone_talks","label":"ALLE REDEN GLEICHZEITIG","active":true,"category":"SOCIAL"},
-    {"id":"djehuty_clarifies","label":"CORVUS MUSS ETWAS ERKLÄREN","active":true,"category":"CORVUS"}
+    {"id":"everyone_talks","label":"ALLE REDEN GLEICHZEITIG","active":true,"category":"SOCIAL"}
   ]
 }
