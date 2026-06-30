@@ -15,10 +15,10 @@
     <p class="studio">Corvus | Chizzl Industries</p>
     <h1>Schrein der<br>Geheimnisse</h1>
     <p class="sub">Ein Webmodul für den aktuellen Dead-by-Daylight-Schrein: API-Daten werden geladen, mit Corvus-Daten ergänzt und im Dizzl-/Royal-Family-Stil dargestellt.</p>
-    <p class="status" id="status">Build 0.5 · Live Cache lädt…</p>
+    <p class="status" id="status">Build 0.6 · DBD Codes Link · Live Cache lädt…</p>
     <div class="shards">✦ Schillernde Scherben im aktuellen Schrein</div>
   </section>
-  <div class="controls"><a class="btn" href="../">Zurück zu Corvus Web</a><button class="btn secondary" id="reload" type="button">Neu laden</button></div>
+  <div class="controls"><a class="btn" href="../">Zurück zu Corvus Web</a><a class="btn" href="../dbd-codes/">DBD-Codes</a><button class="btn secondary" id="reload" type="button">Neu laden</button></div>
   <p class="source" id="sourceLine">Quelle wird geprüft. Corvus lädt zuerst den lokalen Live-Cache und nutzt API/Fallback nur als Reserve.</p>
   <main class="grid" id="grid"></main>
   <p class="foot"><span class="brand">Datenregel:</span> Aktueller Schrein kommt aus NightLight. Für GitHub Pages wird ein lokaler Live-Cache genutzt, damit die Anzeige stabil ist und nicht an Browser-CORS oder externem Cache scheitert.</p>
@@ -30,10 +30,10 @@ function normalizeItem(raw,index){return{role:raw.role||raw.type||'Perk',price:N
 function extractItems(data){if(Array.isArray(data))return data;if(Array.isArray(data.items))return data.items;if(Array.isArray(data.shrine))return data.shrine;if(Array.isArray(data.perks))return data.perks;if(data.data&&Array.isArray(data.data.perks))return data.data.perks;if(data.data&&Array.isArray(data.data))return data.data;if(data.data&&Array.isArray(data.data.items))return data.data.items;return[]}
 async function fetchJson(url){const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);return await res.json()}
 function formatWindow(data){if(!data||!data.data)return'';const start=data.data.start?new Date(data.data.start).toLocaleDateString('de-DE'):'';const end=data.data.end?new Date(data.data.end).toLocaleDateString('de-DE'):'';return data.data.week?' · Woche '+data.data.week+(start&&end?' · '+start+'–'+end:''):'';}
-async function loadShrine(){document.getElementById('status').textContent='Build 0.5 · Live Cache lädt…';let source='';let data=null;for(const url of API_CANDIDATES){try{data=await fetchJson(url);source=url.includes('shrine-live')?'NightLight Live Cache':url.includes('nightlight')?'NightLight API':'Fallback';break}catch(e){console.warn('Shrine source failed',url,e)}}const items=extractItems(data).slice(0,4).map(normalizeItem);document.getElementById('status').textContent='Build 0.5 · '+source+formatWindow(data)+' · '+items.length+' Perks';document.getElementById('sourceLine').textContent='Quelle: '+source+'. Wenn hier nicht Grim Embrace / Blood Warden / Balanced Landing / Teamwork steht, ist noch alter Cache aktiv.';render(items)}
+async function loadShrine(){document.getElementById('status').textContent='Build 0.6 · Live Cache lädt…';let source='';let data=null;for(const url of API_CANDIDATES){try{data=await fetchJson(url);source=url.includes('shrine-live')?'NightLight Live Cache':url.includes('nightlight')?'NightLight API':'Fallback';break}catch(e){console.warn('Shrine source failed',url,e)}}const items=extractItems(data).slice(0,4).map(normalizeItem);document.getElementById('status').textContent='Build 0.6 · '+source+formatWindow(data)+' · '+items.length+' Perks';document.getElementById('sourceLine').textContent='Quelle: '+source+'. Wenn hier nicht Grim Embrace / Blood Warden / Balanced Landing / Teamwork steht, ist noch alter Cache aktiv.';render(items)}
 function iconHtml(p){if(p.icon_url)return '<img src="'+p.icon_url+'" alt="Icon '+p.perk_name_de+'" loading="lazy">';return p.fallback_icon}
 function render(items){const grid=document.getElementById('grid');grid.innerHTML='';items.forEach(p=>{const meta=p.character?' · '+p.character:'';const el=document.createElement('article');el.className='card';el.innerHTML='<div class="type"><span class="role">'+p.role+meta+'</span><span class="price">'+p.price.toLocaleString('de-DE')+' Scherben</span></div><div class="iconwrap"><div class="icon">'+iconHtml(p)+'</div></div><div class="names"><div class="de">'+p.perk_name_de+'</div><div class="en">('+p.perk_name_en+')</div></div><div class="desc">'+p.description_de+'</div><div class="corvus"><strong>Corvus-Einschätzung:</strong><br>'+p.corvus_take+'<br><span class="tag">'+p.tag+'</span></div>';grid.appendChild(el)});}
-document.getElementById('reload').addEventListener('click',loadShrine);loadShrine().catch(e=>{document.getElementById('status').textContent='Build 0.5 · Ladefehler';document.getElementById('sourceLine').textContent='Fehler: '+e.message;console.error(e)});
+document.getElementById('reload').addEventListener('click',loadShrine);loadShrine().catch(e=>{document.getElementById('status').textContent='Build 0.6 · Ladefehler';document.getElementById('sourceLine').textContent='Fehler: '+e.message;console.error(e)});
 </script>
 </body>
 </html>
