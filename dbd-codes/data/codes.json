@@ -1,24 +1,53 @@
 {
   "schema_version": "1.0",
-  "data_version": "dbd-codes-scaffold-2026-06-30",
-  "source_note": "Scaffold. Active codes must be checked against current official/community sources before public use.",
+  "data_version": "dbd-codes-pcgamer-2026-06-26",
+  "source_note": "Active and permanent code list checked against PC Gamer guide last updated 2026-06-26. Corvus should re-check before scheduled public promotion.",
+  "source_url": "https://www.pcgamer.com/games/horror/dead-by-daylight-dbd-codes/",
   "last_checked": "2026-06-30",
   "active": [
-    {
-      "code": "ACTIVE-CODE-PLACEHOLDER",
-      "reward": "Aktive Codes werden hier nach Corvus-Prüfung eingetragen.",
-      "status": "placeholder",
-      "expires": "unknown",
-      "note": "Nicht öffentlich als echter Code kommunizieren. Platzhalter für das Modul."
-    }
+    {"code":"THESLASHER","reward":"Slasher Charm","status":"checked","expires":"unknown","note":"Aktiver Code laut Quelle, Ablaufdatum nicht angegeben."},
+    {"code":"DBD10BIRTHDAY","reward":"10 Millionen Bloodpoints","status":"checked","expires":"unknown","note":"Aktiver Code laut Quelle, Ablaufdatum nicht angegeben."},
+    {"code":"LIFEOFTHEPARTY","reward":"Dwight Charm","status":"checked","expires":"unknown","note":"Aktiver Code laut Quelle, Ablaufdatum nicht angegeben."},
+    {"code":"KARMA","reward":"Zwei Karma-Banner und ein Karma-Badge","status":"checked","expires":"unknown","note":"Aktiver Code laut Quelle, Ablaufdatum nicht angegeben."},
+    {"code":"FINDERSCREEPERS","reward":"Elodie Banner und Badge","status":"checked","expires":"unknown","note":"Aktiver Code laut Quelle, Ablaufdatum nicht angegeben."},
+    {"code":"IFLOOKSCOULDCHILL","reward":"Auswahl an Frosty-Eyes-Killer-Kosmetika","status":"checked","expires":"unknown","note":"Aktiver Code laut Quelle, Ablaufdatum nicht angegeben."},
+    {"code":"REDDIT1MIL","reward":"8-Bit Crow Badge","status":"checked","expires":"unknown","note":"Aktiver Code laut Quelle, Ablaufdatum nicht angegeben."}
   ],
   "permanent": [
-    {
-      "code": "PRIDE",
-      "reward": "Pride Charm / Pride-Inhalt",
-      "status": "needs_verification",
-      "expires": "permanent_or_long_term",
-      "note": "Dauerhafte Codes werden später sauber aus geprüfter Quelle übernommen."
-    }
+    {"code":"FLAGL","reward":"Lesbian Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"MFLAG","reward":"MLM Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"FLAGP","reward":"Pansexual Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"FLAGB","reward":"Bisexual Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"ISFLAG","reward":"Intersex Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"FLAGT","reward":"Trans Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"AFLAGG","reward":"Agender Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"GFLAGF","reward":"Gender-fluid Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"NBFLAG","reward":"Nonbinary Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"GFLAGQ","reward":"Genderqueer Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"AFLAGS","reward":"Asexual Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"CAWCAW","reward":"Feathers of Pride Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"PRIDE","reward":"Rainbow Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGPRIDE","reward":"Rainbow Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGPRG","reward":"Progress Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGL","reward":"Lesbian Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGM","reward":"MLM Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGB","reward":"Bisexual Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGP","reward":"Pansexual Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGT","reward":"Trans Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGGQ","reward":"Genderqueer Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGGF","reward":"Gender-fluid Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGNB","reward":"Nonbinary Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGIS","reward":"Intersex Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGAG","reward":"Agender Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDG2S","reward":"Two-spirit Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGPA","reward":"Polyamory Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGAS","reward":"Asexual Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGAR","reward":"Aromantic Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"BDGDM","reward":"Demisexual Pride Flag Badge","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"POLYFLAG","reward":"Polyamory Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"DEMISFLAG","reward":"Demisexual Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"AROMFLAG","reward":"Aromantic Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"TWOSFLAG","reward":"Two-spirit Pride Flag Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."},
+    {"code":"KINDRD","reward":"Glance of Pride Charm","status":"checked","expires":"permanent","note":"Dauerhafter Pride-Code laut Quelle."}
   ]
 }
