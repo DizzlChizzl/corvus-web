@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "data_version": "shrine-demo-fallback-0.3",
+  "source": "Fallback until external shrine API mapping is finalized",
+  "items": [
+    {
+      "role": "Survivor",
+      "price": 2000,
+      "icon_url": "",
+      "perk_name_de": "Sprintboost",
+      "perk_name_en": "Sprint Burst",
+      "description_de": "Wenn du zu rennen beginnst, erhältst du kurzzeitig Eile. Danach verursacht der Perk Erschöpfung.",
+      "corvus_take": "Für neue Spieler stark, weil der Effekt klar ist. Für erfahrene Builds ein Klassiker, aber Timing ist alles.",
+      "tag": "Einsteigerfreundlich"
+    },
+    {
+      "role": "Killer",
+      "price": 2000,
+      "icon_url": "",
+      "perk_name_de": "Barbecue und Chili",
+      "perk_name_en": "Barbecue & Chilli",
+      "description_de": "Nach dem Aufhängen eines Survivors können weit entfernte Survivor-Auren kurz sichtbar werden.",
+      "corvus_take": "Informationsperk mit guter Lernkurve. Stark, wenn du Rotationen lesen und Druck halten willst.",
+      "tag": "Info"
+    },
+    {
+      "role": "Survivor",
+      "price": 2000,
+      "icon_url": "",
+      "perk_name_de": "Entscheidungsschlag",
+      "perk_name_en": "Decisive Strike",
+      "description_de": "Nach dem Abhängen kann der Perk unter bestimmten Bedingungen einen Rettungsmoment ermöglichen.",
+      "corvus_take": "Situativ, aber ikonisch. Corvus empfiehlt: nicht blind kaufen, wenn du den Spielstil nicht nutzt.",
+      "tag": "Situativ"
+    },
+    {
+      "role": "Killer",
+      "price": 2000,
+      "icon_url": "",
+      "perk_name_de": "Hex: Niemand entrinnt dem Tod",
+      "perk_name_en": "Hex: No One Escapes Death",
+      "description_de": "Im Endgame kann ein Fluch-Totem massiven Druck erzeugen, solange es aktiv bleibt.",
+      "corvus_take": "Starkes Endgame-Werkzeug, aber abhängig vom Totem. Für Memes brutal, für Lernkurve nicht immer sauber.",
+      "tag": "Endgame"
+    }
+  ]
+}
