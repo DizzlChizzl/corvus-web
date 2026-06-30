@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corvus Web · Royal Family GGD Bingo</title>
+<style>
+:root{--bg:#09080a;--panel:#18141c;--panel2:#261f2c;--text:#f0ece5;--muted:#b9aebd;--gold:#caa65a;--red:#8e1f2f;--border:rgba(240,236,229,.16)}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(142,31,47,.35),transparent 30%),radial-gradient(circle at 90% 10%,rgba(202,166,90,.18),transparent 28%),linear-gradient(145deg,#121014,#050506);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px}.wrap{max-width:1050px;margin:0 auto}.hero{text-align:center;margin:20px 0 18px}.eyebrow{color:var(--gold);letter-spacing:.18em;text-transform:uppercase;font-size:12px;margin:0 0 8px}h1{margin:0;font-size:clamp(36px,8vw,76px);line-height:.88;text-transform:uppercase}.sub{color:var(--muted);max-width:720px;margin:14px auto 0}.controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px 0}button.control{border:1px solid rgba(202,166,90,.45);color:var(--text);border-radius:999px;padding:13px 18px;background:linear-gradient(135deg,var(--red),#40101a);font-weight:900;cursor:pointer}button.secondary{background:rgba(240,236,229,.06)}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.cell{min-height:124px;perspective:800px;border:0;background:transparent;padding:0;cursor:pointer}.inner{position:relative;width:100%;height:100%;min-height:124px;transition:transform .55s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}.cell.marked .inner{transform:rotateY(180deg)}.face{position:absolute;inset:0;border:1px solid var(--border);border-radius:16px;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;backface-visibility:hidden;overflow:hidden}.front{background:linear-gradient(180deg,var(--panel),var(--panel2))}.back{transform:rotateY(180deg);background:radial-gradient(circle at center,rgba(202,166,90,.24),transparent 45%),linear-gradient(180deg,rgba(142,31,47,.72),#21131a);border-color:rgba(202,166,90,.7)}.label{font-weight:950;font-size:clamp(11px,1.5vw,16px);line-height:1.05;text-transform:uppercase}.mark{font-size:clamp(30px,5vw,54px);color:var(--gold);font-weight:1000;line-height:1}.marktext{color:var(--text);font-weight:950;letter-spacing:.08em;margin-top:8px}.note{text-align:center;color:var(--muted);margin-top:18px;font-size:14px}.badge{color:var(--gold);font-size:11px;margin-top:8px;letter-spacing:.08em;text-transform:uppercase}.status{text-align:center;color:var(--muted);font-size:13px;margin-top:8px}@media(max-width:720px){body{padding:10px}.grid{gap:5px}.cell,.inner{min-height:88px}.face{border-radius:10px;padding:6px}.label{font-size:10px}.badge{display:none}.marktext{font-size:11px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <p class="eyebrow">Corvus Web Lab · Goose Goose Duck Intelligence</p>
+    <h1>Royal Family<br>GGD Bingo</h1>
+    <p class="sub">Mobile Demo. Felder antippen: Die Karte dreht sich um und zeigt das Royal-Family-Mark. WordPress kommt später, hier testen wir schnell und sauber.</p>
+    <p class="status" id="status">Build 0.1 · Standalone GitHub Demo</p>
+  </section>
+  <div class="controls">
+    <button class="control" id="generate">Neue Karte</button>
+    <button class="control secondary" id="reset">Markierungen löschen</button>
+  </div>
+  <main class="grid" id="grid" aria-label="Bingo Karte"></main>
+  <p class="note">Mitte ist frei. <strong>&lt;f3</strong> ist aktuell Platzhalter. Später kann hier Krone, RF-Siegel, Corvus-Mark oder ein Bild rein.</p>
+</div>
+<script>
+const FIELDS=["REINGEDIZZLT","SAUBERER SHERIFF-SCHUSS","DER MAJOR WURDE GEMACHT","KANADIER GETÖTET","KANADIER OHNE REPORT","BOMBE AM BANKETT","HEISSE KARTOFFEL","EXPLOSIVER ABGANG","PELIKAN-GALA","PELIKAN-BANKETT","LEGENDENMENÜ","BAUCH WIRD MEETING","TAUBEN-SIEG","DODO-KRÖNUNG","DODO-DUELL","FALKE ÜBER ALLEM","GEIER-FRÜHSTÜCK","GEIER WIRD SATT","BODY WEG, PANIK DA","BESTATTER LIEST DIE ROLLE","PIEPEN WIRD HEISS","MEDIUM MACHT DIE UHR","SENSOR SIEHT DIE ROTATION","DURCH DIE WAND GESEHEN","RÄCHER SCHLÄGT ZURÜCK","WÄCHTER DRÜCKT AB","SOLDAT LÄDT NACH","ATTENTAT GELUNGEN","HELIUMKONFERENZ","BALLON PLATZT","FADENKREUZ GESEHEN","GESTAPELT GEBOHRT","RABE VERLÄSST DAS MEETING","CUPID MACHT LIEBENDE","LABOR REINIGT PARASIT","AUS DEM NICHTS","DAS WAR DOCH X","TOTE LAUFEN LÄNGER","AB INS GEFÄNGNIS","ABENTEURER SAGT NEIN","KRONLEUCHTER-DRAMA","VERKEHR IST AUCH EIN KILLER","FALKE ODER FALKE?","ROLLENCLAIM FÜTTERT DEN RABEN","ALLE REDEN GLEICHZEITIG","DJEHUTY MUSS KLÄREN"];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function makeCard(){const selected=shuffle(FIELDS).slice(0,24);selected.splice(12,0,"<f3");return selected}
+function render(){const grid=document.getElementById("grid");grid.innerHTML="";makeCard().forEach((label,index)=>{const btn=document.createElement("button");btn.className="cell"+(index===12?" marked free":"");btn.type="button";btn.innerHTML='<span class="inner"><span class="face front"><span class="label">'+label+'</span><span class="badge">RF Bingo</span></span><span class="face back"><span class="mark">&lt;f3</span><span class="marktext">MARKIERT</span></span></span>';btn.addEventListener("click",()=>{if(!btn.classList.contains("free"))btn.classList.toggle("marked")});grid.appendChild(btn)})}
+document.getElementById("generate").addEventListener("click",render);document.getElementById("reset").addEventListener("click",()=>{document.querySelectorAll(".cell").forEach(cell=>{cell.classList.toggle("marked",cell.classList.contains("free"))})});render();
+</script>
+</body>
+</html>
