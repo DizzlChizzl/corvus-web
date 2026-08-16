@@ -1,8 +1,8 @@
+import { bingoV2Data as data } from '../data/bingo-fields-v2.mjs';
 import { generateBoard, tooltipText } from './engine.mjs';
 import { resolveBingoContext } from './session-resolver.mjs';
 import { loadRuntimeRows } from './runtime-adapter.mjs';
 
-const data = await fetch('../data/bingo-fields-v2.json', { cache: 'no-store' }).then((r) => r.json());
 const runtimeUrl = globalThis.GGD_BINGO_RUNTIME_URL || '';
 let runtimeRows = [];
 try { runtimeRows = await loadRuntimeRows(runtimeUrl); } catch (error) { console.warn(error); }
