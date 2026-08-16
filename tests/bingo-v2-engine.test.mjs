@@ -172,8 +172,11 @@ test('S03 UNAVAILABLE snapshot cannot smuggle map fields', () => {
   );
 });
 
-test('S04 READY snapshot outside its validity window fails closed', () => {
-  const after = new Date('2026-08-19T19:30:00.000Z'); // 21:30 Europe/Berlin
-  const c = resolveBingoContext({ now: after, runtimeSnapshot, playableMaps: maps });
-  assert.equal(c.ok, false); assert.equal(c.code, 'MAP_REQUIRED');
+test('S04 expired READY snapshot fails closed even while current time is still inside RF window', () => {
+  const expired = validateRuntimeSnapshot({
+    ...runtimeSnapshot,
+    valid_until: '2026-08-19T19:20:00+02:00',
+  });
+  const c = resolveBingoContext({ now: wed, runtimeSnapshot: expired, playableMaps: maps });
+  assert.equal(c.ok, false); assert.equal(c.code, 'RF_SESSION_MAP_UNRESOLVED');
 });
