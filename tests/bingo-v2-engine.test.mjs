@@ -5,21 +5,33 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { bingoV2Data as data } from '../data/bingo-fields-v2.mjs';
 import { resolveBingoContext } from '../bingo-v2/session-resolver.mjs';
+import { validateRuntimeSnapshot } from '../bingo-v2/runtime-adapter.mjs';
 import { cardSignature, eligibleFields, generateBoard, generateEventFields, validateCanonicalPool } from '../bingo-v2/engine.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const maps = data.playable_maps;
 const wed = new Date('2026-08-19T17:30:00.000Z'); // 19:30 Europe/Berlin
 const tue = new Date('2026-08-18T17:30:00.000Z');
-const runway = [{
-  session_id: 'RF_GGD_2026-08-19', ggd_date: '2026-08-19', dispatch_window_status: 'PRODUCTIVE',
-  test_mode: 'FALSE', status: 'RUNWAY_READY', detected_at: '2026-08-19T18:50:14+02:00',
-  notes: 'session_state=ACTIVE; mode=PRODUCTIVE; runway_date=2026-08-19; runway_status=READY; current_map_id=map_eagleton_springs; current_map_name_de=Eagleton Springs; current_map_source=MOD_RUNWAY; current_map_selected_at=2026-08-19T18:50:14+02:00'
-}];
+const runtimeSnapshot = validateRuntimeSnapshot({
+  schema_version: '1.0',
+  state: 'READY',
+  currentness: 'SAME_DATE_PRODUCTIVE_RUNWAY_READY',
+  reason: '',
+  session_id: 'RF_GGD_2026-08-19',
+  ggd_date: '2026-08-19',
+  map_id: 'map_eagleton_springs',
+  map_name_de: 'Eagleton Springs',
+  map_name_en: 'Eagleton Springs',
+  map_selected_at: '2026-08-19T18:50:14+02:00',
+  valid_from: '2026-08-19T19:00:00+02:00',
+  valid_until: '2026-08-19T21:00:00+02:00',
+  generated_at: '2026-08-19T18:50:20+02:00',
+  source: 'RF_GGD_RUNTIME_RUNWAY_READY',
+});
 
-const ctx = () => resolveBingoContext({ now: wed, runtimeRows: runway, playableMaps: maps });
+const ctx = () => resolveBingoContext({ now: wed, runtimeSnapshot, playableMaps: maps });
 
-test('T01 Wednesday RF window resolves same-date PRODUCTIVE RUNWAY_READY map', () => {
+test('T01 Wednesday RF window resolves same-date sanitized current snapshot', () => {
   assert.deepEqual(ctx().mapId, 'map_eagleton_springs'); assert.equal(ctx().mode, 'RF_SESSION');
 });
 
@@ -36,17 +48,17 @@ test('T03 generated board has 24 unique events plus RF free center', () => {
 });
 
 test('T04 manual map override wins even inside RF window', () => {
-  const c = resolveBingoContext({ now: wed, runtimeRows: runway, playableMaps: maps, manualMapId: 'map_mallard_manor' });
+  const c = resolveBingoContext({ now: wed, runtimeSnapshot, playableMaps: maps, manualMapId: 'map_mallard_manor' });
   assert.equal(c.mapId, 'map_mallard_manor'); assert.equal(c.mode, 'MANUAL');
 });
 
 test('T05 outside RF window fails closed until map is selected', () => {
-  const c = resolveBingoContext({ now: tue, runtimeRows: runway, playableMaps: maps });
+  const c = resolveBingoContext({ now: tue, runtimeSnapshot, playableMaps: maps });
   assert.equal(c.ok, false); assert.equal(c.code, 'MAP_REQUIRED');
 });
 
 test('T06 The Lounge cannot be selected because it is not a playable map', () => {
-  const c = resolveBingoContext({ now: tue, runtimeRows: [], playableMaps: maps, manualMapId: 'map_lounge' });
+  const c = resolveBingoContext({ now: tue, runtimeSnapshot: null, playableMaps: maps, manualMapId: 'map_lounge' });
   assert.equal(c.ok, false); assert.equal(c.code, 'INVALID_MAP');
 });
 
@@ -88,9 +100,17 @@ test('T13 intelligence remains UNKNOWN/PENDING rather than fake precision', () =
   assert(data.fields.every((f) => f.intelligence.state === 'PENDING_EVENT_HARVEST' && f.intelligence.confidence === 'UNKNOWN'));
 });
 
-test('T14 stale previous-Wednesday RUNWAY_READY cannot resolve current Wednesday', () => {
-  const stale = [{...runway[0], session_id:'RF_GGD_2026-08-12', ggd_date:'2026-08-12'}];
-  const c = resolveBingoContext({ now: wed, runtimeRows: stale, playableMaps: maps });
+test('T14 stale previous-Wednesday snapshot cannot resolve current Wednesday', () => {
+  const stale = validateRuntimeSnapshot({
+    ...runtimeSnapshot,
+    session_id: 'RF_GGD_2026-08-12',
+    ggd_date: '2026-08-12',
+    map_selected_at: '2026-08-12T18:50:14+02:00',
+    valid_from: '2026-08-12T19:00:00+02:00',
+    valid_until: '2026-08-12T21:00:00+02:00',
+    generated_at: '2026-08-12T18:50:20+02:00',
+  });
+  const c = resolveBingoContext({ now: wed, runtimeSnapshot: stale, playableMaps: maps });
   assert.equal(c.ok, false); assert.equal(c.code, 'RF_SESSION_MAP_UNRESOLVED');
 });
 
@@ -124,4 +144,36 @@ test('T20 live 1.0 root/data remain distinct from v2 snapshot', () => {
   assert.equal(v1.schema_version, '1.0');
   assert.match(rootIndex, /Royal Family GGD Bingo/);
   assert.doesNotMatch(rootIndex, /bingo-fields-v2\.mjs/);
+});
+
+test('S01 browser rejects raw private session_state rows payload', () => {
+  assert.throws(
+    () => validateRuntimeSnapshot({ rows: [{ lobby_code: 'SECRET7', discord_user_id: '123' }] }),
+    /BINGO_V2_RUNTIME_FIELD_FORBIDDEN:rows/
+  );
+});
+
+test('S02 browser rejects an otherwise valid snapshot with a leaked lobby code field', () => {
+  assert.throws(
+    () => validateRuntimeSnapshot({ ...runtimeSnapshot, lobby_code: 'SECRET7' }),
+    /BINGO_V2_RUNTIME_FIELD_FORBIDDEN:lobby_code/
+  );
+});
+
+test('S03 UNAVAILABLE snapshot cannot smuggle map fields', () => {
+  assert.throws(
+    () => validateRuntimeSnapshot({
+      schema_version: '1.0', state: 'UNAVAILABLE', currentness: 'UNRESOLVED_FAIL_CLOSED',
+      reason: 'CURRENT_MAP_UNRESOLVED', session_id: 'RF_GGD_2026-08-19', ggd_date: '2026-08-19',
+      valid_from: '2026-08-19T19:00:00+02:00', valid_until: '2026-08-19T21:00:00+02:00',
+      generated_at: '2026-08-19T18:50:20+02:00', source: 'RF_GGD_RUNTIME_RUNWAY_READY', map_id: 'map_eagleton_springs'
+    }),
+    /BINGO_V2_RUNTIME_UNAVAILABLE_MAP_FIELD:map_id/
+  );
+});
+
+test('S04 READY snapshot outside its validity window fails closed', () => {
+  const after = new Date('2026-08-19T19:30:00.000Z'); // 21:30 Europe/Berlin
+  const c = resolveBingoContext({ now: after, runtimeSnapshot, playableMaps: maps });
+  assert.equal(c.ok, false); assert.equal(c.code, 'MAP_REQUIRED');
 });
