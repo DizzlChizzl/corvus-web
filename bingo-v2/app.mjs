@@ -1,11 +1,11 @@
 import { bingoV2Data as data } from '../data/bingo-fields-v2.mjs';
 import { generateBoard, tooltipText } from './engine.mjs';
 import { resolveBingoContext } from './session-resolver.mjs';
-import { loadRuntimeRows } from './runtime-adapter.mjs';
+import { loadRuntimeSnapshot } from './runtime-adapter.mjs';
 
 const runtimeUrl = globalThis.GGD_BINGO_RUNTIME_URL || '';
-let runtimeRows = [];
-try { runtimeRows = await loadRuntimeRows(runtimeUrl); } catch (error) { console.warn(error); }
+let runtimeSnapshot = null;
+try { runtimeSnapshot = await loadRuntimeSnapshot(runtimeUrl); } catch (error) { console.warn(error); }
 
 const mapSelect = document.querySelector('#map-select');
 const status = document.querySelector('#status');
@@ -24,7 +24,7 @@ function manualMap() { return mapSelect.value || null; }
 function randomCardSeed() { return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`; }
 
 function resolveContext() {
-  return resolveBingoContext({ now: new Date(), runtimeRows, playableMaps: data.playable_maps, manualMapId: manualMap() });
+  return resolveBingoContext({ now: new Date(), runtimeSnapshot, playableMaps: data.playable_maps, manualMapId: manualMap() });
 }
 
 function render() {
