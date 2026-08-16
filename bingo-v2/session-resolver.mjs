@@ -1,3 +1,5 @@
+import { SNAPSHOT_CURRENTNESS, SNAPSHOT_SOURCE } from './runtime-adapter.mjs';
+
 export const DEFAULT_TIME_ZONE = 'Europe/Berlin';
 
 function berlinParts(now) {
@@ -25,39 +27,29 @@ export function rfOccurrenceId(now = new Date()) {
   return `RF_GGD_${p.date}`;
 }
 
-export function parseRuntimeNotes(notes = '') {
-  const values = {};
-  for (const raw of String(notes).split(';')) {
-    const part = raw.trim();
-    if (!part) continue;
-    const idx = part.indexOf('=');
-    if (idx === -1) continue;
-    values[part.slice(0, idx).trim()] = part.slice(idx + 1).trim();
-  }
-  return values;
+function snapshotTimeIsCurrent(snapshot, now) {
+  const from = Date.parse(String(snapshot.valid_from || ''));
+  const until = Date.parse(String(snapshot.valid_until || ''));
+  const selected = Date.parse(String(snapshot.map_selected_at || ''));
+  const current = now.getTime();
+  if (![from, until, selected].every(Number.isFinite)) return false;
+  return current >= from && current < until;
 }
 
-function normalizeTestMode(value) {
-  if (typeof value === 'boolean') return value;
-  return String(value).trim().toUpperCase() === 'TRUE';
-}
-
-function resolveLatestRunwayRow(rows, sessionId, date) {
-  const candidates = rows
-    .filter((row) => String(row.session_id || '') === sessionId)
-    .filter((row) => String(row.ggd_date || '') === date)
-    .filter((row) => String(row.dispatch_window_status || '').toUpperCase() === 'PRODUCTIVE')
-    .filter((row) => normalizeTestMode(row.test_mode) === false)
-    .filter((row) => String(row.status || '').toUpperCase() === 'RUNWAY_READY')
-    .map((row) => ({ row, notes: parseRuntimeNotes(row.notes) }))
-    .filter(({ notes }) => notes.current_map_id)
-    .sort((a, b) => String(a.row.detected_at || '').localeCompare(String(b.row.detected_at || '')));
-  return candidates.at(-1) || null;
+function snapshotMatchesOccurrence(snapshot, sessionId, date, now) {
+  if (!snapshot || snapshot.state !== 'READY') return false;
+  if (String(snapshot.session_id || '') !== sessionId) return false;
+  if (String(snapshot.ggd_date || '') !== date) return false;
+  if (String(snapshot.currentness || '') !== SNAPSHOT_CURRENTNESS) return false;
+  if (String(snapshot.source || '') !== SNAPSHOT_SOURCE) return false;
+  if (!String(snapshot.map_selected_at || '').startsWith(date)) return false;
+  if (!snapshotTimeIsCurrent(snapshot, now)) return false;
+  return true;
 }
 
 export function resolveBingoContext({
   now = new Date(),
-  runtimeRows = [],
+  runtimeSnapshot = null,
   playableMaps = [],
   manualMapId = null,
 } = {}) {
@@ -83,12 +75,11 @@ export function resolveBingoContext({
     return { ok: false, code: 'MAP_REQUIRED', sessionId, mode: 'OUTSIDE_RF_WINDOW' };
   }
 
-  const resolved = resolveLatestRunwayRow(runtimeRows, sessionId, parts.date);
-  if (!resolved) {
+  if (!snapshotMatchesOccurrence(runtimeSnapshot, sessionId, parts.date, now)) {
     return { ok: false, code: 'RF_SESSION_MAP_UNRESOLVED', sessionId, mode: 'RF_SESSION' };
   }
 
-  const mapId = resolved.notes.current_map_id;
+  const mapId = String(runtimeSnapshot.map_id || '');
   if (!validMaps.has(mapId)) {
     return { ok: false, code: 'RF_SESSION_MAP_INVALID', sessionId, mode: 'RF_SESSION' };
   }
@@ -98,8 +89,8 @@ export function resolveBingoContext({
     sessionId,
     mapId,
     mode: 'RF_SESSION',
-    source: resolved.notes.current_map_source || 'RUNTIME_SESSION_STATE',
-    selectedAt: resolved.notes.current_map_selected_at || resolved.row.detected_at || null,
+    source: runtimeSnapshot.source,
+    selectedAt: runtimeSnapshot.map_selected_at,
     rfWindow: true,
   };
 }
