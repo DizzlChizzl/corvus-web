@@ -4,7 +4,7 @@ This directory is a non-live Phase-2 implementation. The root `index.html` and `
 
 ## Truth boundaries
 
-- `data/bingo-fields-v2.json` is a versioned implementation snapshot of the GGD003 75-field canonical pool.
+- `data/bingo-fields-v2.mjs` is a versioned implementation snapshot of the GGD003 75-field canonical pool.
 - Wednesday 19:00–21:00 Europe/Berlin resolves only the same-date `PRODUCTIVE` + non-test + `RUNWAY_READY` runtime session state.
 - The browser contains no Google service-account credentials. `runtime-adapter.mjs` accepts only a separately authorized public-safe JSON snapshot endpoint.
 - If Wednesday map truth is unavailable, the resolver fails closed to explicit map selection.
