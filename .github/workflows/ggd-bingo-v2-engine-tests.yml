@@ -1,0 +1,22 @@
+name: GGD Bingo 2.0 Engine Tests
+on:
+  pull_request:
+    paths:
+      - 'bingo-v2/**'
+      - 'data/bingo-fields-v2.mjs'
+      - 'tests/bingo-v2-engine.test.mjs'
+      - '.github/workflows/ggd-bingo-v2-engine-tests.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Run GGD Bingo 2.0 T01-T20
+        run: node --test tests/bingo-v2-engine.test.mjs
