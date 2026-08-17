@@ -1,4 +1,4 @@
-import { bingoV2Data as data } from '../data/bingo-fields-v2-product.mjs';
+import { bingoV2Data as data } from '../data/bingo-fields-v2-proof.mjs';
 import { generateBoard, tooltipText } from './engine.mjs';
 import { resolveBingoContext } from './session-resolver.mjs';
 import { loadRuntimeSnapshot } from './runtime-adapter.mjs';
@@ -43,7 +43,7 @@ function render() {
   let seed = sessionStorage.getItem(storageKey);
   if (!seed) { seed = randomCardSeed(); sessionStorage.setItem(storageKey, seed); }
   const board = generateBoard({ data, mapId: context.mapId, cardSeed: seed });
-  status.textContent = `${context.mode === 'RF_SESSION' ? 'RF Wednesday' : 'Manuell'} · ${map.name_de} · eigene Karte`;
+  status.textContent = `${context.mode === 'RF_SESSION' ? 'RF Wednesday' : 'Manuell'} · ${map.name_de} · öffentliche Meeting-Proof-Karte`;
   grid.replaceChildren();
 
   for (const field of board) {
