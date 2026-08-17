@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { bingoV2Data as data } from '../data/bingo-fields-v2-proof.mjs';
+import { bingoV2Data as data } from '../data/bingo-fields-v2-proof-final.mjs';
 import { eligibleFields, generateBoard, generateEventFields, signatureFields, validateCanonicalPool, validateMapSignatures } from '../bingo-v2/engine.mjs';
 
 const maps = data.playable_maps.map((m) => m.id);
@@ -15,7 +15,11 @@ const bannedPrivateIds = [
   'bingo_mallardon_heat_kill','bingo_black_swan_vent_room','bingo_politician_tie',
 ];
 
-test('P01 proof pool is exactly 33 canonical fields', () => assert.equal(data.fields.length, 33));
+const newBalanceIds = [
+  'bingo_meeting_vote_out','bingo_meeting_dead_equal_alive','bingo_first_meeting_vote_out','bingo_claim_then_vote_out',
+];
+
+test('P01 proof pool is exactly 37 canonical fields', () => assert.equal(data.fields.length, 37));
 test('P02 proof policy is active', () => assert.equal(data.proof_policy, 'PUBLIC_MEETING_OR_ROUND_END_ONLY'));
 test('P03 every field carries PUBLIC_PROOF', () => assert(data.fields.every((f) => f.proof_mode === 'PUBLIC_PROOF')));
 test('P04 canonical validation passes under proof gate', () => assert.equal(validateCanonicalPool(data), true));
@@ -65,4 +69,23 @@ test('P24 zero-signature maps still generate complete cards', () => {
 test('P25 no source field depends on private video/statistics runtime', () => {
   assert.equal(data.statistics_mode, 'OPTIONAL_FUTURE_COST_FROZEN');
   assert(data.fields.every((f) => f.intelligence?.confidence === 'UNKNOWN'));
+});
+test('P26 four balance fields are public proof rather than cap relaxation', () => {
+  for (const id of newBalanceIds) {
+    const field = data.fields.find((f) => f.id === id);
+    assert(field, id); assert.equal(field.proof_mode, 'PUBLIC_PROOF', id);
+  }
+});
+test('P27 claim-to-voteout field proves sequence, never role truth', () => {
+  const field = data.fields.find((f) => f.id === 'bingo_claim_then_vote_out');
+  assert.match(field.trigger_de, /claimt/i); assert.match(field.trigger_de, /Vote-Out/i);
+  assert.doesNotMatch(field.trigger_de, /tatsächlich|wirklich die Rolle/i);
+});
+test('P28 public vote-out field has no role-cause dependency', () => {
+  const field = data.fields.find((f) => f.id === 'bingo_meeting_vote_out');
+  assert.equal(field.role_gate, ''); assert.doesNotMatch(field.trigger_de, /Politiker|Attentäter|Rabe|Clown/i);
+});
+test('P29 every final proof field is either shared-meeting/global-state or round-end scoped', () => {
+  const allowed = new Set(['MEETING_ALL','ROUND_END_ALL','ALL_LIVING_PLAYERS']);
+  assert(data.fields.every((f) => allowed.has(f.proof_scope)), data.fields.filter((f) => !allowed.has(f.proof_scope)).map((f) => f.id).join(','));
 });
