@@ -12,11 +12,12 @@ const bannedPrivateIds = [
   'bingo_sniper_crosshair','bingo_mime_control','bingo_cupid_lovers','bingo_host_parasite_lab','bingo_morph_fake',
   'bingo_prison_vote','bingo_key_saves','bingo_chandelier','bingo_bus','bingo_teleporter_shift','bingo_nexus_shuttle_splatter',
   'bingo_airlock_kill','bingo_jungle_boulder_kill','bingo_mummy_kill','bingo_carnival_rollercoaster_kill',
-  'bingo_mallardon_heat_kill','bingo_black_swan_vent_room','bingo_politician_tie',
+  'bingo_mallardon_heat_kill','bingo_black_swan_vent_room','bingo_politician_tie','bingo_task_win',
 ];
 
-const newBalanceIds = [
-  'bingo_meeting_vote_out','bingo_meeting_dead_equal_alive','bingo_first_meeting_vote_out','bingo_claim_then_vote_out',
+const publicBalanceIds = [
+  'bingo_meeting_vote_out','bingo_meeting_dead_equal_alive','bingo_first_meeting_vote_out',
+  'bingo_claim_then_vote_out','bingo_meeting_vote_landslide',
 ];
 
 test('P01 proof pool is exactly 37 canonical fields', () => assert.equal(data.fields.length, 37));
@@ -25,7 +26,7 @@ test('P03 every field carries PUBLIC_PROOF', () => assert(data.fields.every((f) 
 test('P04 canonical validation passes under proof gate', () => assert.equal(validateCanonicalPool(data), true));
 test('P05 map signatures allow zero-signature maps and validate', () => assert.equal(validateMapSignatures(data), true));
 test('P06 all 12 playable maps are represented', () => assert.equal(Object.keys(data.map_signatures).length, 12));
-test('P07 banned private/witness/self-report fields are absent', () => { for (const id of bannedPrivateIds) assert(!data.fields.some((f) => f.id === id), id); });
+test('P07 banned private, witness and unproven-cause fields are absent', () => { for (const id of bannedPrivateIds) assert(!data.fields.some((f) => f.id === id), id); });
 test('P08 Mallard Manor has no chandelier signature', () => assert.equal(signatureFields(data, 'map_mallard_manor').length, 0));
 test('P09 Eagleton has no private map signature', () => assert.equal(signatureFields(data, 'map_eagleton_springs').length, 0));
 test('P10 Nexus has no shuttle/teleporter signature', () => assert.equal(signatureFields(data, 'map_nexus_colony').length, 0));
@@ -70,22 +71,31 @@ test('P25 no source field depends on private video/statistics runtime', () => {
   assert.equal(data.statistics_mode, 'OPTIONAL_FUTURE_COST_FROZEN');
   assert(data.fields.every((f) => f.intelligence?.confidence === 'UNKNOWN'));
 });
-test('P26 four balance fields are public proof rather than cap relaxation', () => {
-  for (const id of newBalanceIds) {
+test('P26 five balance/replacement fields are public proof rather than cap relaxation', () => {
+  for (const id of publicBalanceIds) {
     const field = data.fields.find((f) => f.id === id);
     assert(field, id); assert.equal(field.proof_mode, 'PUBLIC_PROOF', id);
   }
 });
-test('P27 claim-to-voteout field proves sequence, never role truth', () => {
+test('P27 claim-to-voteout proves sequence, never role truth', () => {
   const field = data.fields.find((f) => f.id === 'bingo_claim_then_vote_out');
   assert.match(field.trigger_de, /claimt/i); assert.match(field.trigger_de, /Vote-Out/i);
   assert.doesNotMatch(field.trigger_de, /tatsächlich|wirklich die Rolle/i);
 });
-test('P28 public vote-out field has no role-cause dependency', () => {
+test('P28 public vote-out has no role-cause dependency', () => {
   const field = data.fields.find((f) => f.id === 'bingo_meeting_vote_out');
   assert.equal(field.role_gate, ''); assert.doesNotMatch(field.trigger_de, /Politiker|Attentäter|Rabe|Clown/i);
 });
-test('P29 every final proof field is either shared-meeting/global-state or round-end scoped', () => {
+test('P29 every final proof field is shared-meeting/global-state or round-end scoped', () => {
   const allowed = new Set(['MEETING_ALL','ROUND_END_ALL','ALL_LIVING_PLAYERS']);
   assert(data.fields.every((f) => allowed.has(f.proof_scope)), data.fields.filter((f) => !allowed.has(f.proof_scope)).map((f) => f.id).join(','));
+});
+test('P30 task-win cause is not accepted unless public cause proof exists', () => assert(!data.fields.some((f) => f.id === 'bingo_task_win')));
+test('P31 sacrifice-bell proof never asserts hidden faction identity', () => {
+  const field = data.fields.find((f) => f.id === 'bingo_basement_sacrifice');
+  assert(field); assert.doesNotMatch(field.trigger_de, /Nicht-Enten|Gans|Ente/i);
+});
+test('P32 landslide field depends only on visible vote count', () => {
+  const field = data.fields.find((f) => f.id === 'bingo_meeting_vote_landslide');
+  assert(field); assert.match(field.trigger_de, /mindestens fünf Stimmen/); assert.equal(field.role_gate, '');
 });
