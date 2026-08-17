@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RF GGD Bingo 2.0 · Engine Preview</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#09080a;color:#f0ece5;margin:0;padding:20px}.wrap{max-width:1000px;margin:auto}select,button{font:inherit;padding:10px 14px}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.cell{aspect-ratio:1;border:1px solid #61576a;background:#18141c;color:#f0ece5;padding:8px;font-weight:800}.cell.marked{outline:3px solid #caa65a;background:#351722}.cell.free{color:#caa65a}.muted{color:#b9aebd}#detail{min-height:3em;border-left:3px solid #caa65a;padding-left:12px}
+</style>
+</head>
+<body><main class="wrap"><h1>Royal Family GGD Bingo 2.0</h1><p class="muted">Nicht live verdrahtete Engine-Preview. Wednesday-Auto-Map funktioniert nur mit einem separat bereitgestellten public-safe Runtime-Snapshot.</p><div class="controls"><select id="map-select"><option value="">Map selbst wählen</option></select><button id="generate">Neue Karte</button></div><p id="status"></p><div id="grid" class="grid"></div><p id="detail" class="muted">Feld antippen für die genaue Erklärung.</p></main><script type="module" src="./app.mjs"></script></body></html>

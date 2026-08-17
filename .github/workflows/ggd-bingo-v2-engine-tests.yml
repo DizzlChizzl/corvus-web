@@ -1,0 +1,26 @@
+name: GGD Bingo 2.0 Public-Proof Tests
+on:
+  pull_request:
+    paths:
+      - 'bingo-v2/**'
+      - 'data/bingo-fields-v2.mjs'
+      - 'data/bingo-fields-v2-product.mjs'
+      - 'data/bingo-fields-v2-proof.mjs'
+      - 'data/bingo-fields-v2-proof-final.mjs'
+      - 'tests/bingo-v2-engine.test.mjs'
+      - 'tests/bingo-v2-proof.test.mjs'
+      - '.github/workflows/ggd-bingo-v2-engine-tests.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Run historical engine regression + public-proof acceptance
+        run: node --test tests/bingo-v2-engine.test.mjs tests/bingo-v2-proof.test.mjs
