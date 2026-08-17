@@ -35,6 +35,7 @@ function shuffle(items, seedText) {
 export function validateCanonicalPool(data) {
   if (!data || data.schema_version !== '2.0') throw new Error('BINGO_V2_SCHEMA_INVALID');
   if (!Array.isArray(data.fields)) throw new Error('BINGO_V2_FIELDS_MISSING');
+  const proofRequired = data.proof_policy === 'PUBLIC_MEETING_OR_ROUND_END_ONLY';
   const ids = new Set();
   for (const field of data.fields) {
     if (!field.id || ids.has(field.id)) throw new Error(`BINGO_V2_DUPLICATE_ID:${field.id || 'EMPTY'}`);
@@ -44,6 +45,7 @@ export function validateCanonicalPool(data) {
     }
     if (!RELEASE_STATES.has(field.release_state)) throw new Error(`BINGO_V2_RELEASE_STATE_INVALID:${field.id}`);
     if (field.live_eligible !== true) throw new Error(`BINGO_V2_NONLIVE_FIELD_IN_CANONICAL:${field.id}`);
+    if (proofRequired && field.proof_mode !== 'PUBLIC_PROOF') throw new Error(`BINGO_V2_PRIVATE_PROOF_LEAK:${field.id}`);
   }
   return true;
 }
@@ -57,13 +59,15 @@ export function validateMapSignatures(data) {
     const policy = signatures[mapId];
     if (!policy) throw new Error(`BINGO_V2_SIGNATURE_MAP_MISSING:${mapId}`);
     const ids = [...(policy.hard || []), ...(policy.conditional || [])];
-    if (!ids.length) throw new Error(`BINGO_V2_SIGNATURE_EMPTY:${mapId}`);
     if (new Set(ids).size !== ids.length) throw new Error(`BINGO_V2_SIGNATURE_DUPLICATE:${mapId}`);
     for (const id of ids) {
       if (!fieldIds.has(id)) throw new Error(`BINGO_V2_SIGNATURE_FIELD_MISSING:${mapId}:${id}`);
     }
-    if (!(policy.min >= 1 && policy.target >= policy.min && policy.max >= policy.target && policy.max <= 6)) {
+    if (!(policy.min >= 0 && policy.target >= policy.min && policy.max >= policy.target && policy.max <= 6)) {
       throw new Error(`BINGO_V2_SIGNATURE_POLICY_INVALID:${mapId}`);
+    }
+    if (!ids.length && (policy.min !== 0 || policy.target !== 0 || policy.max !== 0)) {
+      throw new Error(`BINGO_V2_EMPTY_SIGNATURE_POLICY_NONZERO:${mapId}`);
     }
   }
   return true;
