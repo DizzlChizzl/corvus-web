@@ -23,6 +23,15 @@ function publicField({ id, label, release='READY_2_0', family, cap=2, duplicateG
   };
 }
 
+const proofBaseFields = proofData.fields
+  .filter((item) => item.id !== 'bingo_task_win')
+  .map((item) => item.id === 'bingo_basement_sacrifice' ? {
+    ...item,
+    trigger_de: 'Die Opferglocke läuft bis zum Spezialmeeting; ein öffentlich sichtbarer Skip-/Tie-Ausgang löst die game-selected Eliminierung aus.',
+    not_trigger_de: 'Glocke rechtzeitig gefunden, normale Vote-Eliminierung oder bloße Behauptung über die Opferrolle.',
+    detail_de: 'Die Opferglocke läuft bis zum Spezialmeeting; ein öffentlich sichtbarer Skip-/Tie-Ausgang löst die game-selected Eliminierung aus. Beweisbar ist das besondere gemeinsame Meeting plus die vom Spiel sichtbar ausgewählte Eliminierung; keine Fraktionsidentität des Opfers wird behauptet. Nicht zählen: Glocke rechtzeitig gefunden, normale Vote-Eliminierung oder bloße Behauptung über die Opferrolle.',
+  } : item);
+
 const balanceFields = [
   publicField({
     id: 'bingo_meeting_vote_out',
@@ -65,9 +74,20 @@ const balanceFields = [
     trigger: 'Ein Spieler claimt im Meeting hörbar eine konkrete Rolle und wird im selben Meeting durch den sichtbaren Vote-Out entfernt.',
     notTrigger: 'Claim in einem früheren Meeting oder Tod ohne Vote-Out.',
   }),
+  publicField({
+    id: 'bingo_meeting_vote_landslide',
+    label: '5+ STIMMEN AUF EINE PERSON',
+    release: 'READY_HUMAN_CONFIRM',
+    family: 'PUBLIC_MEETING',
+    cap: 2,
+    duplicateGroup: 'VOTE_DISTRIBUTION',
+    rarity: 'MEDIUM',
+    trigger: 'Die gemeinsame Abstimmungsanzeige zeigt mindestens fünf Stimmen auf derselben Person.',
+    notTrigger: 'Vier oder weniger sichtbare Stimmen auf einer Person oder nur behauptete Votes.',
+  }),
 ];
 
-const fields = [...proofData.fields, ...balanceFields];
+const fields = [...proofBaseFields, ...balanceFields];
 if (fields.length !== 37) throw new Error(`BINGO_V2_FINAL_PROOF_POOL_COUNT:${fields.length}`);
 if (new Set(fields.map((item) => item.id)).size !== fields.length) throw new Error('BINGO_V2_FINAL_PROOF_DUPLICATE_ID');
 if (fields.some((item) => item.proof_mode !== 'PUBLIC_PROOF')) throw new Error('BINGO_V2_FINAL_PRIVATE_PROOF_LEAK');
