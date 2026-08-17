@@ -1,4 +1,4 @@
-import { bingoV2Data as data } from '../data/bingo-fields-v2.mjs';
+import { bingoV2Data as data } from '../data/bingo-fields-v2-product.mjs';
 import { generateBoard, tooltipText } from './engine.mjs';
 import { resolveBingoContext } from './session-resolver.mjs';
 import { loadRuntimeSnapshot } from './runtime-adapter.mjs';
