@@ -6,6 +6,7 @@ on:
       - 'data/bingo-fields-v2.mjs'
       - 'data/bingo-fields-v2-product.mjs'
       - 'data/bingo-fields-v2-proof.mjs'
+      - 'data/bingo-fields-v2-proof-final.mjs'
       - 'tests/bingo-v2-engine.test.mjs'
       - 'tests/bingo-v2-proof.test.mjs'
       - '.github/workflows/ggd-bingo-v2-engine-tests.yml'
