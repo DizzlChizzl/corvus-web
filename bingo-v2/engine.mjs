@@ -48,6 +48,27 @@ export function validateCanonicalPool(data) {
   return true;
 }
 
+export function validateMapSignatures(data) {
+  const playable = new Set((data.playable_maps || []).map((map) => map.id));
+  const fieldIds = new Set((data.fields || []).map((field) => field.id));
+  const signatures = data.map_signatures || {};
+  if (Object.keys(signatures).length !== playable.size) throw new Error('BINGO_V2_SIGNATURE_MAPSET_MISMATCH');
+  for (const mapId of playable) {
+    const policy = signatures[mapId];
+    if (!policy) throw new Error(`BINGO_V2_SIGNATURE_MAP_MISSING:${mapId}`);
+    const ids = [...(policy.hard || []), ...(policy.conditional || [])];
+    if (!ids.length) throw new Error(`BINGO_V2_SIGNATURE_EMPTY:${mapId}`);
+    if (new Set(ids).size !== ids.length) throw new Error(`BINGO_V2_SIGNATURE_DUPLICATE:${mapId}`);
+    for (const id of ids) {
+      if (!fieldIds.has(id)) throw new Error(`BINGO_V2_SIGNATURE_FIELD_MISSING:${mapId}:${id}`);
+    }
+    if (!(policy.min >= 1 && policy.target >= policy.min && policy.max >= policy.target && policy.max <= 6)) {
+      throw new Error(`BINGO_V2_SIGNATURE_POLICY_INVALID:${mapId}`);
+    }
+  }
+  return true;
+}
+
 export function eligibleFields(data, mapId) {
   validateCanonicalPool(data);
   const playable = new Set((data.playable_maps || []).map((map) => map.id));
@@ -59,7 +80,7 @@ export function eligibleFields(data, mapId) {
   });
 }
 
-function policyCap(field) {
+function specialFamilyCap(field) {
   const familyCaps = {
     TEAM_WIN: 1,
     NEUTRAL_WIN: 2,
@@ -67,70 +88,98 @@ function policyCap(field) {
     SOCIAL_RF: 2,
     VOICE_EFFECT: 1,
   };
-  return Math.min(
-    Number(field.max_per_card_family || Number.POSITIVE_INFINITY),
-    Number(familyCaps[field.family] || Number.POSITIVE_INFINITY),
-  );
+  return Number(familyCaps[field.family] || Number.POSITIVE_INFINITY);
+}
+
+function fieldFamilyCap(field) {
+  return Number(field.max_per_card_family || Number.POSITIVE_INFINITY);
 }
 
 function createTracker() {
-  return { family: new Map(), rare: 0, legendary: 0, mapSpecific: 0 };
+  return { family: new Map(), duplicate: new Map(), rare: 0, legendary: 0, mapSpecific: 0, signatures: 0 };
 }
 
 function isMapSpecific(field) {
   return Array.isArray(field.maps) && field.maps.length > 0;
 }
 
+function duplicateGroup(field) {
+  return field.duplicate_group || field.family;
+}
+
 function canAdd(field, tracker, maxMapSpecific) {
   const familyCount = tracker.family.get(field.family) || 0;
-  if (familyCount >= policyCap(field)) return false;
+  if (familyCount >= specialFamilyCap(field)) return false;
+  const group = duplicateGroup(field);
+  const duplicateCount = tracker.duplicate.get(group) || 0;
+  if (duplicateCount >= fieldFamilyCap(field)) return false;
   if (isMapSpecific(field) && tracker.mapSpecific >= maxMapSpecific) return false;
   if (LEGENDARY_STATES.has(field.rarity_prior) && tracker.legendary >= 1) return false;
   if (RARE_STATES.has(field.rarity_prior) && tracker.rare >= 8) return false;
   return true;
 }
 
-function addField(field, selected, tracker) {
+function addField(field, selected, tracker, signatureIds) {
   selected.push(field);
   tracker.family.set(field.family, (tracker.family.get(field.family) || 0) + 1);
+  const group = duplicateGroup(field);
+  tracker.duplicate.set(group, (tracker.duplicate.get(group) || 0) + 1);
   if (RARE_STATES.has(field.rarity_prior)) tracker.rare += 1;
   if (LEGENDARY_STATES.has(field.rarity_prior)) tracker.legendary += 1;
   if (isMapSpecific(field)) tracker.mapSpecific += 1;
+  if (signatureIds.has(field.id)) tracker.signatures += 1;
 }
 
-function tryBuild(eligible, seed, size) {
-  const mapSpecific = eligible.filter(isMapSpecific);
-  const minMapSpecific = mapSpecific.length >= 2 ? Math.min(3, mapSpecific.length) : mapSpecific.length;
-  const maxMapSpecific = mapSpecific.length >= 2 ? Math.min(5, mapSpecific.length) : mapSpecific.length;
+function signaturePolicy(data, mapId) {
+  validateMapSignatures(data);
+  return data.map_signatures[mapId];
+}
+
+export function signatureFields(data, mapId) {
+  const eligible = eligibleFields(data, mapId);
+  const policy = signaturePolicy(data, mapId);
+  const ids = new Set([...(policy.hard || []), ...(policy.conditional || [])]);
+  return eligible.filter((field) => ids.has(field.id));
+}
+
+function tryBuild(data, eligible, mapId, seed, size) {
+  const policy = signaturePolicy(data, mapId);
+  const signatureIds = new Set([...(policy.hard || []), ...(policy.conditional || [])]);
+  const signatures = eligible.filter((field) => signatureIds.has(field.id));
+  const requiredSignatures = signatures.length < policy.min ? signatures.length : policy.min;
+  const targetSignatures = Math.min(policy.target, signatures.length);
+  const maxMapSpecific = policy.max;
   const selected = [];
   const selectedIds = new Set();
   const tracker = createTracker();
 
-  for (const field of shuffle(mapSpecific, `${seed}:map`)) {
-    if (selected.length >= minMapSpecific) break;
+  for (const field of shuffle(signatures, `${seed}:signatures`)) {
+    if (tracker.signatures >= targetSignatures) break;
     if (!canAdd(field, tracker, maxMapSpecific)) continue;
-    addField(field, selected, tracker);
+    addField(field, selected, tracker, signatureIds);
     selectedIds.add(field.id);
   }
+
+  if (tracker.signatures < requiredSignatures) return null;
 
   for (const field of shuffle(eligible, `${seed}:all`)) {
     if (selected.length >= size) break;
     if (selectedIds.has(field.id)) continue;
     if (!canAdd(field, tracker, maxMapSpecific)) continue;
-    addField(field, selected, tracker);
+    addField(field, selected, tracker, signatureIds);
     selectedIds.add(field.id);
   }
 
   if (selected.length !== size) return null;
-  if (mapSpecific.length >= 2 && tracker.mapSpecific < 2) return null;
+  if (tracker.signatures < requiredSignatures) return null;
   return selected;
 }
 
 export function generateEventFields({ data, mapId, cardSeed, size = 24 }) {
   const eligible = eligibleFields(data, mapId);
   if (eligible.length < size) throw new Error(`BINGO_V2_POOL_TOO_SMALL:${eligible.length}`);
-  for (let attempt = 0; attempt < 64; attempt += 1) {
-    const selected = tryBuild(eligible, `${cardSeed}:attempt:${attempt}`, size);
+  for (let attempt = 0; attempt < 128; attempt += 1) {
+    const selected = tryBuild(data, eligible, mapId, `${cardSeed}:attempt:${attempt}`, size);
     if (selected) return selected;
   }
   throw new Error('BINGO_V2_POOL_OVERCONSTRAINED');
